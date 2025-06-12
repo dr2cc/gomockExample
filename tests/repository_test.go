@@ -29,14 +29,15 @@ func TestGetUserByID_Success(t *testing.T) {
 	// Create a mock object for the UserRepository interface
 	mockRepo := mocks.NewMockUserRepository(ctrl)
 
-	// Set the expected behavior: when GetUserByID is called with "1", return a user.
+	// Set the expected behavior:
+	// when GetUserByID is called with "1", return a user.
 	mockRepo.EXPECT().
 		GetUserByID("1").
 		Return(&models.User{ID: "1", Name: "Alex"}, nil)
 
-	service := service.NewUserService(mockRepo)
+	serviceTest := service.NewUserService(mockRepo)
 
-	user, err := service.GetUser("1")
+	user, err := serviceTest.GetUser("1")
 
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
