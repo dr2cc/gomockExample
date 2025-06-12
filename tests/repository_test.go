@@ -134,7 +134,11 @@ func TestGetUserByID_WithDoCallback(t *testing.T) {
 	assert.Equal(t, "1", user.ID)
 }
 
-// // 11.06.2025 В этом тесте ошибка. Пока не разбираюсь
+// // 12.06.2025 Видимо не дописанный тест.
+// // Хорошая практика- дописать его!!
+// // Видимо в type UserRepository interface
+// // нужно добавить UpdateUser
+// // а в user_service.go надо добавить метод UpdateUserAsync
 // func TestUpdateUserAsync(t *testing.T) {
 // 	ctrl := gomock.NewController(t)
 // 	defer ctrl.Finish()
@@ -143,6 +147,7 @@ func TestGetUserByID_WithDoCallback(t *testing.T) {
 // 	wg := sync.WaitGroup{}
 
 // 	mockRepo.EXPECT().
+// 		// видимо нужно добавить метод UpdateUser в интерфейс UserRepository
 // 		UpdateUser("1", "Updated Name").
 // 		Do(func(id, name string) {
 // 			wg.Done()
@@ -153,11 +158,13 @@ func TestGetUserByID_WithDoCallback(t *testing.T) {
 // 	service := service.NewUserService(mockRepo)
 
 // 	wg.Add(1)
+// 	// видимо в user_service.go надо добавить метод UpdateUserAsync
 // 	go service.UpdateUserAsync("1", "Updated Name")
 
 // 	wg.Wait() // ждем завершения goroutine
 // }
 
+// 12.06.2025 Этот не проходит, ругается на Docker
 func TestUserRepositoryWithPostgres(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 	defer cancel()
@@ -228,6 +235,7 @@ func TestUserRepositoryWithPostgres(t *testing.T) {
 	log.Println("Successfully connected to PostgreSQL database.")
 }
 
+// 12.06.2025 этот проходит!
 func TestGetUserByID(t *testing.T) {
 	tests := []struct {
 		name       string
