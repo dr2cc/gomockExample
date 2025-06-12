@@ -35,10 +35,10 @@ func TestGetUserByID_Success(t *testing.T) {
 		GetUserByID("1").
 		Return(&models.User{ID: "1", Name: "Alex"}, nil)
 
-	serviceTest := service.NewUserService(mockRepo)
+	// serviceTest := service.NewUserService(mockRepo)
+	// user, err := serviceTest.GetUser("1")
 
-	user, err := serviceTest.GetUser("1")
-
+	user, err := service.NewUserService(mockRepo).GetUser("1")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -60,8 +60,11 @@ func TestDeleteUser_Success(t *testing.T) {
 		Return(nil).
 		Times(1)
 
-	service := service.NewUserService(mockRepo)
-	err := service.DeleteUser("1")
+	// service := service.NewUserService(mockRepo)
+	// err := service.DeleteUser("1")
+
+	// я
+	err := service.NewUserService(mockRepo).DeleteUser("1")
 
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
