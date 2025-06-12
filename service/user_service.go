@@ -16,7 +16,7 @@ type UserService struct {
 // при запросе создает и возвращает объект UserService
 // со значением поля repo переданного сюда в параметре ro
 func NewUserService(ro internal.UserRepository) *UserService {
-	// // было записано так (это проставя запись структуры, если у нее одно поле):
+	// // было записано так (это простая запись структуры, если у нее одно поле):
 	// return &UserService{repo: ro}
 
 	// напишу как привык:

@@ -134,6 +134,8 @@ func TestGetUserByID_WithDoCallback(t *testing.T) {
 	assert.Equal(t, "1", user.ID)
 }
 
+// // Все тесты выше работают!
+//
 // // 12.06.2025 Видимо не дописанный тест.
 // // Хорошая практика- дописать его!!
 // // Видимо в type UserRepository interface
@@ -235,7 +237,7 @@ func TestUserRepositoryWithPostgres(t *testing.T) {
 	log.Println("Successfully connected to PostgreSQL database.")
 }
 
-// 12.06.2025 этот проходит!
+// 12.06.2025 этот тест проходит!
 func TestGetUserByID(t *testing.T) {
 	tests := []struct {
 		name       string
