@@ -5,12 +5,17 @@ import (
 	"fmt"
 
 	"github.com/zmey56/gomock/models"
-	"github.com/zmey56/gomock/service"
 )
 
 type UserStorage struct {
 	Data map[string]string
 }
+
+// UserStorage должна имплементировать эти методы!
+// type UserRepository interface {
+// 	GetUserByID(id string) (*models.User, error)
+// 	DeleteUser(id string) error
+// }
 
 func NewStorage() *UserStorage {
 	return &UserStorage{
@@ -19,36 +24,34 @@ func NewStorage() *UserStorage {
 }
 
 func main() {
-	person := models.User{
-		ID:   "2",
-		Name: "Pit",
-	}
 
 	storageInstance := NewStorage()
 
-	storageInstance.CreateUser(person.ID, person.Name)
+	fmt.Println(storageInstance.GetUserByID("1"))
 
 }
 
-func (s *UserStorage) CreateUser(id string, url string) {
-	s.Data[id] = url
+// Первый метод UserRepository interface есть!!
+func (s *UserStorage) GetUserByID(id string) (*models.User, error) {
 
-	//попробовать здесь
-	// ctrl := gomock.NewController(t)
-	// defer ctrl.Finish()
+	person := models.User{
+		ID:   id,
+		Name: "Pit",
+	}
 
-	// mockRepo := mocks.NewMockUserRepository(ctrl)
-	//надо заменить mockRepo
+	// var ro internal.UserRepository
+	// // // Ошибки нет! Осталось присвоить правильную переменную!
+	// //ro = person
+	// service.NewUserService(ro).DeleteUser("2")
 
-	service.NewUserService(mockRepo).DeleteUser("2")
-
-	fmt.Println("User", s.Data[id], ", id", id)
+	return &person, nil
 }
 
-// func (s *UserStorage) GetURL(id string) (string, error) {
-// 	e, exists := s.Data[id]
-// 	if !exists {
-// 		return id, errors.New("URL with such id doesn't exist")
-// 	}
-// 	return e, nil
-// }
+// // Вид UserRepository interface уже готов!!
+func (s *UserStorage) DeleteUser(id string) error {
+	// e, exists := s.Data[id]
+	// if !exists {
+	// 	return id, errors.New("URL with such id doesn't exist")
+	// }
+	return nil
+}
