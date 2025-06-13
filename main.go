@@ -5,53 +5,74 @@ import (
 	"fmt"
 
 	"github.com/zmey56/gomock/models"
+	"github.com/zmey56/gomock/service"
 )
 
-type UserStorage struct {
-	Data map[string]string
+// Цель: создать тип данных реализующий интерфейс internal.UserRepository .
+// Сделал. Методы VS Code перечислит ниже:
+type resident struct {
+	ID   string
+	Name string
 }
 
-// UserStorage должна имплементировать эти методы!
-// type UserRepository interface {
-// 	GetUserByID(id string) (*models.User, error)
-// 	DeleteUser(id string) error
-// }
-
-func NewStorage() *UserStorage {
-	return &UserStorage{
-		Data: make(map[string]string),
+// конструктор
+func newResident(id string, name string) resident {
+	return resident{
+		ID:   id,
+		Name: name,
 	}
 }
 
 func main() {
+	// Может потом пойму почему в метод с одним параметром,
+	// нужно отправлять два!?
+	user, _ := resident.GetUserByID(newResident("2", "Kid"), "2")
+	fmt.Println(*user)
 
-	storageInstance := NewStorage()
+	// Здесь главное!
+	// Обращаюсь к конструктору service.NewUserService, принимающему параметром
+	// интерфейс internal.UserRepository .
+	//
+	// В Go передача интерфейса параметром в функцию означает,
+	// что функция может принимать на вход объект любого типа,
+	// который реализует определенный интерфейс.
+	//
+	// Таковым объектом является мой объект resident .
+	// Т.к. он должен в точности реализовывать методы интерфейса (заданные не мной!),
+	// то метод GetUserByID возвращает тип *models.User ,
+	// а уже его я привожу- resident(*user)
+	hz := service.NewUserService(resident(*user))
+	fmt.Println(hz)
+	// Пока (13.06.25) я получаю
+	// &{{2 Kid}}
+	// Но это не так важно!
+	// Главное- я получил данные из стороннего кода, не нарушая его.
+	// Теперь тесты с моками должны быть более понятны!
 
-	fmt.Println(storageInstance.GetUserByID("1"))
+	// Включение или нет, вызова DeleteUser сути дела не меняет.
+	// Главное- мой объект resident здесь реализует второй метод
+	// интерфейса internal.UserRepository
+	resident.DeleteUser(resident(*user), "2")
 
 }
 
-// Первый метод UserRepository interface есть!!
-func (s *UserStorage) GetUserByID(id string) (*models.User, error) {
+// Первый метод интерфейса internal.UserRepository
+func (s resident) GetUserByID(id string) (*models.User, error) {
 
 	person := models.User{
-		ID:   id,
-		Name: "Pit",
+		ID:   s.ID,
+		Name: s.Name,
 	}
-
-	// var ro internal.UserRepository
-	// // // Ошибки нет! Осталось присвоить правильную переменную!
-	// //ro = person
-	// service.NewUserService(ro).DeleteUser("2")
 
 	return &person, nil
 }
 
-// // Вид UserRepository interface уже готов!!
-func (s *UserStorage) DeleteUser(id string) error {
-	// e, exists := s.Data[id]
-	// if !exists {
-	// 	return id, errors.New("URL with such id doesn't exist")
-	// }
+// Второй метод интерфейса internal.UserRepository
+func (s resident) DeleteUser(id string) error {
+	// Стираю данные в структуре
+	s.ID = ""
+	s.Name = ""
+	fmt.Println(s)
+
 	return nil
 }
