@@ -10,16 +10,16 @@ import (
 
 // Цель: создать тип данных реализующий интерфейс internal.UserRepository .
 // Сделал. Методы VS Code перечислит ниже:
-type resident struct {
-	ID   string
-	Name string
+type employee struct {
+	profession string
+	division   string
 }
 
 // конструктор
-func newResident(id string, name string) resident {
-	return resident{
-		ID:   id,
-		Name: name,
+func newEmployee(p string, d string) employee {
+	return employee{
+		profession: p,
+		division:   d,
 	}
 }
 
@@ -35,24 +35,35 @@ func main() {
 	//
 	// В Go передача интерфейса параметром в функцию означает,
 	// что функция может принимать на вход объект любого типа,
-	// который реализует определенный интерфейс.
+	// который реализует этот интерфейс.
 	//
-	// Таковым объектом является мой объект resident .
+	// Таковым объектом является мой объект resident
+	//
 	// Т.к. он должен в точности реализовывать методы интерфейса (заданные не мной!),
-	// то метод GetUserByID возвращает тип *models.User ,
+	// то метод GetUserByID возвращает тип *models.User
+	//
 	// а уже его я привожу- resident(*user)
+	//
 	//service.NewUserService(resident(*user))
-	user := *service.NewUserService(newResident("2", "Kid"))
+	//
+	// Получаю тип main.employee
+	fmt.Printf("%T\n", newEmployee("clerk", "accounting"))
+	user := *service.NewUserService(newEmployee("manager", "sales"))
+	// Получаю тип service.UserService
+	fmt.Printf("%T\n", user)
+	//
 	// обращаюсь к service.GetUser
-	fmt.Println(user.GetUser("2"))
+	fmt.Println(user.GetUser("3"))
 	// обращаюсь к service.DeleteUser
-	fmt.Println(user.DeleteUser("2"))
+	fmt.Println(user.DeleteUser("3"))
 
 	// Пока (13.06.25) я получаю
 	// &{{2 Kid}}
 	// Но это не так важно!
+	//
 	// Главное- я получил данные из стороннего кода, не нарушая его.
 	// Теперь тесты с моками должны быть более понятны!
+	//
 	// get, _ := resident.GetUserByID(resident(*&user.DeleteUser), "2")
 	// fmt.Println("найдена запись:", *get)
 	// // Включение или нет, вызова DeleteUser сути дела не меняет.
@@ -62,24 +73,27 @@ func main() {
 
 }
 
-// Первый метод интерфейса internal.UserRepository , нахожу
-func (s resident) GetUserByID(id string) (*models.User, error) {
-	fmt.Println("Я GetUserByID , вызываюсь из service.GetUser и получил:")
+// Первый метод интерфейса internal.UserRepository , нахожу запись
+func (s employee) GetUserByID(id string) (*models.User, error) {
+	fmt.Println("Я GetUserByID , вызываюсь из service.GetUser и не понимаю зачем тут ID:", id)
+
+	fmt.Println(s)
 
 	person := models.User{
-		ID:   s.ID,
-		Name: s.Name,
+		ID:   s.profession,
+		Name: s.division,
 	}
 
 	return &person, nil
+	//return models.User(*s),nil
 }
 
-// Второй метод интерфейса internal.UserRepository
-func (s resident) DeleteUser(id string) error {
+// Второй метод интерфейса internal.UserRepository , стираю запись
+func (s employee) DeleteUser(id string) error {
 	// Стираю данные в структуре
-	fmt.Println("Я DeleteUser, вызываюсь из service.DeleteUser и удаляю запись:", s)
-	s.ID = ""
-	s.Name = ""
+	fmt.Println("Я DeleteUser, вызываюсь из service.DeleteUser и не понимаю зачем тут ID", id, "и удаляю", s)
+	s.profession = ""
+	s.division = ""
 	fmt.Println(s)
 
 	return nil
