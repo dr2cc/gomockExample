@@ -8,7 +8,7 @@ import (
 	"github.com/zmey56/gomock/service"
 )
 
-// Цель: создать тип данных реализующий интерфейс internal.UserRepository .
+// Тип данных реализующий интерфейс internal.UserRepository .
 // Сделал. Методы VS Code перечислит ниже:
 type employee struct {
 	profession string
@@ -21,6 +21,32 @@ func newEmployee(p string, d string) employee {
 		profession: p,
 		division:   d,
 	}
+}
+
+// Первый метод типа employee , реализующий интерфейс internal.UserRepository , нахожу запись
+func (s employee) GetUserByID(id string) (*models.User, error) {
+	fmt.Println("Я GetUserByID , вызываюсь из service.GetUser и не понимаю зачем тут ID:", id)
+
+	fmt.Println(s)
+
+	person := models.User{
+		ID:   s.profession,
+		Name: s.division,
+	}
+
+	return &person, nil
+	//return models.User(*s),nil
+}
+
+// Второй метод типа employee , реализующий интерфейс internal.UserRepository , стираю запись
+func (s employee) DeleteUser(id string) error {
+	// Стираю данные в структуре
+	fmt.Println("Я DeleteUser, вызываюсь из service.DeleteUser и не понимаю зачем тут ID", id, "и удаляю", s)
+	s.profession = ""
+	s.division = ""
+	fmt.Println(s)
+
+	return nil
 }
 
 func main() {
@@ -71,30 +97,4 @@ func main() {
 	// // интерфейса internal.UserRepository
 	// resident.DeleteUser(resident(*user), "2")
 
-}
-
-// Первый метод интерфейса internal.UserRepository , нахожу запись
-func (s employee) GetUserByID(id string) (*models.User, error) {
-	fmt.Println("Я GetUserByID , вызываюсь из service.GetUser и не понимаю зачем тут ID:", id)
-
-	fmt.Println(s)
-
-	person := models.User{
-		ID:   s.profession,
-		Name: s.division,
-	}
-
-	return &person, nil
-	//return models.User(*s),nil
-}
-
-// Второй метод интерфейса internal.UserRepository , стираю запись
-func (s employee) DeleteUser(id string) error {
-	// Стираю данные в структуре
-	fmt.Println("Я DeleteUser, вызываюсь из service.DeleteUser и не понимаю зачем тут ID", id, "и удаляю", s)
-	s.profession = ""
-	s.division = ""
-	fmt.Println(s)
-
-	return nil
 }
