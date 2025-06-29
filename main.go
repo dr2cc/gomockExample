@@ -10,6 +10,11 @@ import (
 
 var user1 service.UserService
 
+// Главное- я получил данные из стороннего кода, почти не нарушая его.
+// !!! Единственное исключение- в структуре service.UserService
+// !!! изменил название поля repo на Repo иначе оно не видно здесь.
+// Теперь тесты с моками должны быть более понятны!
+
 func main() {
 	user1 = *service.NewUserService(newEmployee("manager", "sales"))
 
@@ -23,10 +28,15 @@ func main() {
 	// Что я в них буду делать не регламентируется,
 	// регламентируются только параметры и возвращаемые значения.
 
+	// Суть: в строке пишу искомую профессию, если она соответствует той, что передана выше
+	// то выводится сообщение о ее наличии, а в другом методе структура с этой профессией очищается.
+	searchBar := "driver"
+	// если заменим на "manager" то все найдется и заменится!
+
 	// обращаюсь к service.GetUser
-	user1.GetUser("manager")
+	user1.GetUser(searchBar)
 	// обращаюсь к service.DeleteUser
-	user1.DeleteUser("manager")
+	user1.DeleteUser(searchBar)
 	// Что теперь в user1 :
 	fmt.Println(user1)
 }
@@ -45,12 +55,6 @@ func newEmployee(p string, d string) employee {
 		division:   d,
 	}
 }
-
-// реализую этот интерфейс
-// type UserRepository interface {
-// 	GetUserByID(id string) (*models.User, error)
-// 	DeleteUser(id string) error
-// }
 
 // Первый метод типа employee , реализующий интерфейс internal.UserRepository , нахожу запись
 func (s employee) GetUserByID(id string) (*models.User, error) {
@@ -73,71 +77,15 @@ func (s employee) GetUserByID(id string) (*models.User, error) {
 
 // Второй метод типа employee , реализующий интерфейс internal.UserRepository , стираю запись
 func (s employee) DeleteUser(id string) error {
-	//var v service.UserService = user1
-	// // запрос такой "go как обратится к полю структуры являющейся интерфейсом"
 	if id == s.profession {
 		fmt.Println("Удаляю запись о типе работников:", s.division)
-		// Вот здесь написать правильную работу с указателем.
-		// Цель- очищать первоначальную структуру, т.е user1
-		//user1
-		v := &s
-		v.profession = ""
-		v.division = ""
-		fmt.Println(*v)
+		// Нужно очищать первоначальную структуру, т.е user1
+		s.profession = ""
+		s.division = ""
+		user1.Repo = s
 		return nil
 	} else {
 		fmt.Println("Не найдено соответствие для удаления типа работников", id, "\nтекущий тип работников", s.profession)
 		return nil
 	}
 }
-
-// // main старый, может комменты тут полезные?
-// func main() {
-// 	// Может потом пойму почему в метод с одним параметром,
-// 	// нужно отправлять два!?
-// 	//user, _ := resident.GetUserByID(newResident("2", "Kid"), "2")
-// 	//fmt.Println(*user)
-
-// 	// Здесь главное!
-// 	// Обращаюсь к конструктору service.NewUserService, принимающему параметром
-// 	// интерфейс internal.UserRepository .
-// 	//
-// 	// В Go передача интерфейса параметром в функцию означает,
-// 	// что функция может принимать на вход объект любого типа,
-// 	// который реализует этот интерфейс.
-// 	//
-// 	// Таковым объектом является мой объект resident
-// 	//
-// 	// Т.к. он должен в точности реализовывать методы интерфейса (заданные не мной!),
-// 	// то метод GetUserByID возвращает тип *models.User
-// 	//
-// 	// а уже его я привожу- resident(*user)
-// 	//
-// 	//service.NewUserService(resident(*user))
-// 	//
-// 	// Получаю тип main.employee
-// 	fmt.Printf("%T\n", newEmployee("clerk", "accounting"))
-// 	user := *service.NewUserService(newEmployee("manager", "sales"))
-// 	// Получаю тип service.UserService
-// 	fmt.Printf("%T\n", user)
-// 	//
-// 	// обращаюсь к service.GetUser
-// 	fmt.Println(user.GetUser("3"))
-// 	// обращаюсь к service.DeleteUser
-// 	fmt.Println(user.DeleteUser("3"))
-
-// 	// Пока (13.06.25) я получаю
-// 	// &{{2 Kid}}
-// 	// Но это не так важно!
-// 	//
-// 	// Главное- я получил данные из стороннего кода, не нарушая его.
-// 	// Теперь тесты с моками должны быть более понятны!
-// 	//
-// 	// get, _ := resident.GetUserByID(resident(*&user.DeleteUser), "2")
-// 	// fmt.Println("найдена запись:", *get)
-// 	// // Включение или нет, вызова DeleteUser сути дела не меняет.
-// 	// // Главное- мой объект resident здесь реализует второй метод
-// 	// // интерфейса internal.UserRepository
-// 	// resident.DeleteUser(resident(*user), "2")
-
-// }

@@ -8,11 +8,14 @@ import (
 // Как я понимаю логика работы (теста) здесь.
 
 // Структура с полем repo равным интерфейсу UserRepository
+// !!! Единственное изменение в чужом коде!!!
+// !!! Меняю repo на Repo . Иначе это поле не видно из других модулей!
+// !!!
 // В Go, если интерфейс используется как тип значения в структуре, это означает,
 // что поле структуры может хранить значения любого типа, реализующего данный интерфейс.
 // VS Code любезно покажет методы:
 type UserService struct {
-	repo internal.UserRepository
+	Repo internal.UserRepository
 }
 
 // Конструктор объектов UserService (при запросе создает и возвращает объект UserService,
@@ -27,7 +30,7 @@ func NewUserService(ro internal.UserRepository) *UserService {
 
 	// напишу как привык:
 	return &UserService{
-		repo: ro,
+		Repo: ro,
 	}
 }
 
@@ -35,12 +38,12 @@ func NewUserService(ro internal.UserRepository) *UserService {
 // т.к. NewUserService принимает параметром интерфейс NewUserService
 // то и метод NewUserService (!!!!)
 func (s *UserService) GetUser(id string) (*models.User, error) {
-	return s.repo.GetUserByID(id)
+	return s.Repo.GetUserByID(id)
 }
 
 // метод DeleteUser объекта UserService
 // т.к. NewUserService принимает параметром интерфейс NewUserService
 // то и метод NewUserService (!!!!)
 func (s *UserService) DeleteUser(id string) error {
-	return s.repo.DeleteUser(id)
+	return s.Repo.DeleteUser(id)
 }
